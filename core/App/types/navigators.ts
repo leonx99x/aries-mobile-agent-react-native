@@ -2,6 +2,7 @@ import { NavigatorScreenParams } from '@react-navigation/core'
 
 import { DeclineType } from './decline'
 
+
 export enum Screens {
   AttemptLockout = 'Temporarily Locked',
   Splash = 'Splash',
@@ -29,6 +30,7 @@ export enum Screens {
   UseBiometry = 'Use Biometry',
   RecreatePIN = 'Change PIN',
   Developer = 'Developer',
+  CredentialProposal = "Credential Proposal"
 }
 
 export enum Stacks {
@@ -76,6 +78,7 @@ export type ContactStackParams = {
   [Screens.Contacts]: undefined
   [Screens.Chat]: { connectionId: string }
   [Screens.ContactDetails]: { connectionId: string }
+  [Screens.CredentialProposal]: { connectionId: string }
 }
 
 export type CredentialStackParams = {

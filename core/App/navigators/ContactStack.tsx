@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '../contexts/theme'
 import Chat from '../screens/Chat'
 import ContactDetails from '../screens/ContactDetails'
+import CredentialProposal from '../screens/CredentialProposal'
 import ListContacts from '../screens/ListContacts'
 import { ContactStackParams, Screens } from '../types/navigators'
 
@@ -24,6 +25,7 @@ const ContactStack: React.FC = () => {
         options={{ title: t('Screens.ContactDetails') }}
       />
       <Stack.Screen name={Screens.Chat} component={Chat} />
+      <Stack.Screen name={Screens.CredentialProposal} component={CredentialProposal} />
     </Stack.Navigator>
   )
 }

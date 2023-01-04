@@ -61,6 +61,7 @@
     "babel.config.js",
     "jest.config.js",
     "jestSetup.js",
-    "lib"
+    "lib",
+    "./built/**/*" 
   ]
 }

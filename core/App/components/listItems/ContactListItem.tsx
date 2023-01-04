@@ -47,7 +47,7 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
       onPress={() =>
         navigation
           .getParent()
-          ?.navigate(Stacks.ContactStack, { screen: Screens.Chat, params: { connectionId: contact.id } })
+          ?.navigate(Stacks.ContactStack, { screen: Screens.CredentialProposal, params: { connectionId: contact.id } })
       }
     >
       <View key={contact.id} style={styles.outerContainer}>
