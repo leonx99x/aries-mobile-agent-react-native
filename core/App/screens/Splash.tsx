@@ -166,7 +166,7 @@ const Splash: React.FC = () => {
 
         const newAgent = new Agent(
           {
-            label: 'Aries Bifold',
+            label: 'Bob',
             mediatorConnectionsInvite: Config.MEDIATOR_URL,
             mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
             walletConfig: { id: credentials.id, key: credentials.key },
