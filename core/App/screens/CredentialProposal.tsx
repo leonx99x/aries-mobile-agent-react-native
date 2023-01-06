@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, SafeAreaView } from 'react-native';
+import { View, Text, SafeAreaView } from 'react-native';
+import TextInput from '../components/inputs/TextInput';
 import { useAgent, useCredentialById } from '@aries-framework/react-hooks'
 import { V1ProposeCredentialHandler } from '@aries-framework/core/build/modules/credentials/protocol/v1/handlers';
 import { useStore } from '../contexts/store';
@@ -8,19 +9,19 @@ import { BifoldError } from '../types/error';
 import { useTranslation } from 'react-i18next';
 import { ContactStackParams, Screens } from '../types/navigators';
 import { StackScreenProps } from '@react-navigation/stack';
-import { IndyCredentialFormat, ProposeCredentialOptions, V1CredentialService } from '@aries-framework/core';
+import { CredentialState, IndyCredentialFormat, ProposeCredentialOptions, V1CredentialService } from '@aries-framework/core';
 import { indyDidRegex } from '@aries-framework/core/build/utils';
+import Button, { ButtonType } from '../components/buttons/Button';
 
 type CredentialProposalProps = StackScreenProps<ContactStackParams, Screens.CredentialProposal>
 
 const CredentialProposal: React.FC<CredentialProposalProps> = ({ navigation, route }) => {
     const { agent } = useAgent();
     const { connectionId } = route.params;
-    const [email, setEmail] = useState('test');
+    const [email, setEmail] = useState('');
     const [, dispatch] = useStore()
     const credential = useCredentialById('credentialId')
     const { t } = useTranslation()
-    const [proposeCredentialOptions, setProposeCredentialOptions] = useState<ProposeCredentialOptions>()
 
     useEffect(() => {
         console.log(connectionId)
@@ -40,37 +41,53 @@ const CredentialProposal: React.FC<CredentialProposalProps> = ({ navigation, rou
             })
         }
     }, [])
-    // const options: ProposeCredentialOptions<[IndyCredentialFormat], [V1CredentialService]> = {
-    //     comment: 'email proposal',
-    //     connectionId: connectionId,
-    //     protocolVersion: 'v1',
-    //     credentialFormats:
-    //     {
-    //         schemaIssuerDid: "HEQRhnkMRimjTZEaeejm21",
-    //         schemaId: "HEQRhnkMRimjTZEaeejm21:2:email:1.0",
-    //         schemaName: "email",
-    //         schemaVersion: "1.0",
-    //         credentialDefinitionId: "HEQRhnkMRimjTZEaeejm21:3:CL:19:default",
-    //         issuerDid: "HEQRhnkMRimjTZEaeejm21",
-    //         attributes: [
-    //             {
-    //                 name: 'email',
-    //                 value: email
-    //             },
-    //         ]
-    //     }
+    const options: ProposeCredentialOptions<[IndyCredentialFormat], [V1CredentialService]> = {
+        comment: 'email proposal',
+        connectionId: connectionId,
+        protocolVersion: 'v1',
+        credentialFormats:
+        {
+            indy: {
+                attributes: [
+                    {
+                        name: 'email',
+                        value: email,
+                    }
+                ]
+            }
+        }
 
-    // };
-    // async function proposeCredential() {
-    //     try {
-    //         // Perform the propose credential action using the provided options
-    //         const result = await agent?.credentials.proposeCredential(options);
-
-    //         // Update the state or UI to reflect the successful result
-    //     } catch (error) {
-    //         // Handle the error, such as by displaying an error message or updating the state or UI
-    //     }
-    const handleSubmit = async () => {
+    };
+    function proposeCredential() {
+        try {
+            // Perform the propose credential action using the provided options
+            agent?.credentials.proposeCredential(options).then((result) => {
+                if (result.state === CredentialState.ProposalSent) {
+                    console.log("Credential Proposal Sent")
+                }
+            })
+        } catch (error) {
+            // Handle the error
+        }
+    }
+    const handleSubmit = () => {
+        try {
+            proposeCredential()
+        } catch (error) {
+            dispatch({
+                type: DispatchAction.ERROR_ADDED,
+                payload: [
+                    {
+                        error: new BifoldError(
+                            t('Error.Title1035'),
+                            t('Error.Message1035'),
+                            t('CredentialOffer.CredentialNotFound'),
+                            1035
+                        ),
+                    },
+                ],
+            })
+        }
     }
     return (
         //make an email field
@@ -78,18 +95,20 @@ const CredentialProposal: React.FC<CredentialProposalProps> = ({ navigation, rou
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text>Credential Proposal</Text>
                 <TextInput
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                    label='Email'
+                    style={{ borderColor: 'white', borderWidth: 1, width: 200, height: 40 }}
                     onChangeText={text => setEmail(text)}
                     value={email}
                     placeholder="Email"
                 />
-                <Button title="Submit" onPress={handleSubmit} />
+                <Button
+                    title="Submit"
+                    buttonType={ButtonType.Primary}
+                    onPress={handleSubmit} />
             </View>
         </SafeAreaView>
-    )
-
-}
-
+    );
+};
 export default CredentialProposal
 
 
